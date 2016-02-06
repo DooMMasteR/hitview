@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html ng-app="hitviewapp" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Hitview</title>
+    <script src="libs/js/angular/angular.js"></script>
+    <script src="libs/js/ng-websocket/ng-websocket.js"></script>
+    <script src="libs/js/ng-lodash/ng-lodash.js"></script>
+    <script src="app/app.js"></script>
+</head>
+<body>
+<div class="container" style="width: 100%;">
+    <div class="container-float pull-right">
+        <clock-span style="white-space:nowrap;"></clock-span>
+    </div>
+</div>
+<hr>
+<div ng-controller="HitView">
+    <table>
+        <tr>
+            <th>
+                Node ID
+            </th>
+            <th>
+                Event
+            </th>
+        </tr>
+        <tr ng-repeat="target in double|orderBy: 'id'">
+            <td>{{target.id}}</td>
+            <td>{{target.eventType}}</td>
+        </tr>
+    </table>
+</div>
+</div>
+
+</body>
+</html>
