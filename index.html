@@ -6,9 +6,11 @@
     <title>Hitview</title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="libs/css/bootstrap.min.css">
+    <script src="libs/js/moment/moment-with-locales.js"></script>
     <script src="libs/js/angular/angular.js"></script>
     <script src="libs/js/ng-websocket/ng-websocket.js"></script>
     <script src="libs/js/ng-lodash/ng-lodash.js"></script>
+    <script src="libs/js/angular-moment/angular-moment.js"></script>
     <script src="app/app.js"></script>
 </head>
 <body>
@@ -18,22 +20,32 @@
     </div>
 </div>
 <hr>
-<div class="container" ng-controller="HitView">
-    <table class="table table-responsive table-bordered">
+<div class="col-sm-2"></div>
+<div class="container col-sm-8 center-block" ng-controller="HitView">
+    <table class="table table-bordered">
         <tr>
-            <th>
+            <th style="text-align: center" width="30%">
                 Node ID
             </th>
-            <th>
+            <th style="text-align: center" width="30%">
                 Event
             </th>
+            <th style="text-align: center" width="10%">
+                Time
+            </th>
+            <th style="text-align: center" width="10%">
+                HitCount
+            </th>
         </tr>
-        <tr ng-repeat="target in double|orderBy: 'id'">
-            <td>{{target.id}}</td>
-            <td>{{target.eventType}}</td>
+        <tr style="text-align: center" ng-repeat="target in double|orderBy: '-timestamp'">
+            <td style="text-align: center">{{target.id}}</td>
+            <td style="text-align: center">{{target.eventType}}</td>
+            <td style="text-align: center"><time-difference-to-now from-time="target.timestamp"></time-difference-to-now></td>
+            <td style="text-align: center">{{target.hitcount}}</td>
         </tr>
     </table>
 </div>
+<div class="col-sm-2"></div>
 
 </body>
 </html>
