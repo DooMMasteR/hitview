@@ -1,28 +1,36 @@
 'use strict';
 
-var app = angular.module('hitviewapp', ['ngWebsocket', 'ngLodash']);
+var app = angular.module('hitviewapp', ['ngWebsocket', 'ngLodash', 'angularMoment']);
 
-app.service('WebsocketService', function ($websocket, $interval) {
+app.service('WebsocketService', function ($websocket, $log, $interval) {
     var _messagecallback = [];
     var _closecallback = [];
     var _ws = $websocket.$new({
-        url: 'ws://' + location.hostname + ':8000/',
+        url: 'ws://' + "192.168.179.44" + ':10080/',
         protocols: []
     });
 
+    //var _ws = $websocket.$new({
+    //    url: 'ws://' + location.hostname + ':8000/',
+    //    protocols: []
+    //});
+
     _ws.$on('$open', function () {
-        $interval(function () {
-            var data = {
-                id: Math.floor((Math.random() * 10) + 1),
-                eventType: Math.floor((Math.random() * 10) + 1),
-                timestamp: Date.now(),
-                name: "wand"
-            };
-            _ws.$emit("target.event", data);
-        }, 777.77777);
+        $log.debug("Wer are connected");
+        //$interval(function () {
+        //    var data = {
+        //        id: Math.floor((Math.random() * 10) + 1),
+        //        eventType: Math.floor((Math.random() * 10) + 1),
+        //        timestamp: Date.now(),
+        //        name: "wand"
+        //    };
+        //    _ws.$emit("target.event", data);
+        //}, 3000);
     });
 
     _ws.$on('$message', function (data) {
+        $log.debug("Got Message");
+        $log.debug(data);
         angular.forEach(_messagecallback, function (callback) {
             callback(data);
         });
@@ -44,23 +52,24 @@ app.factory('Target', function ($log) {
     function Taget(id) {
         $log.debug("New Target created");
         this.id = id;
-        this.eventType = null;
-        this.timestamp = null;
+        this.eventType = "";
+        this.timestamp = "";
         this.hitcount = 0;
     }
-
     return Taget;
 });
 
 
 app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
+    $log.debug("Targets instantiated");
     var _ = lodash;
     var targets = null;
 
     function Targets() {
         this.targetList = [];
+        this.teamName = "";
+        this.teamHitcount = "";
         if (!targets) {
-            $log.debug("Saving self for later");
             targets = this;
         }
     }
@@ -69,7 +78,7 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
         if (targets == null) {
             targets = new Targets();
         }
-        return targets.targetList;
+        return targets;
     };
 
     Targets.getTargetById = function (id, createIfNotExists) {
@@ -81,65 +90,43 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
         return res;
     };
 
+    Targets.setTeamName = function(name){
+        targets.teamName = name;
+    };
+
+    Targets.setTeamHitcount = function(count){
+        targets.teamHitcount = count;
+    };
+
+    Targets.clear = function(){
+        targets.targetList = [];
+    };
+
 
     WebsocketService.onmessage(function (message) {
-        $log.debug("Targets model got an event");
-        $log.debug(message);
-        if (message.event == "target.event") {
-            $log.debug("It is a target.event");
-            var target = Targets.getTargetById(message.data.id, true);
+        if (message.event == "hit") {
+            var target = Targets.getTargetById(parseInt(message.data.id), true);
             if (message.data.eventType) {
                 target.eventType = message.data.eventType;
             }
-            if (message.data.timestamp) {
-                target.timestamp = message.data.timestamp;
+            if (message.data.state) {
+                target.timestamp = message.data.state;
             }
-            target.hitcount++;
+            if (message.data.hits) {
+                target.hitcount = message.data.hits;
+            }
+            //Targets.setTeamName(message.data.team);
         }
     });
 
     return Targets;
 });
 
-app.controller('HitView', function ($scope, $interval, $log, WebsocketService, Targets) {
-    WebsocketService.onmessage(function (message) {
-        $log.debug("HitView controller got an event");
-        $log.debug(message)
-    });
+app.controller('HitView', function ($scope, $interval, $log, WebsocketService, Targets, amMoment) {
     $scope.wsService = WebsocketService;
     $scope.double = Targets.getTargets();
+    $interval(function(){
+        $log.debug($scope.double);
+    }, 3000);
 });
 
-app.directive("timeDifferenceToNow", function () {
-    return {
-        restrict: "E",
-        scope: {
-            from: "=fromTime"
-        },
-        controller: function($scope, $interval){
-
-            function msToTime(s) {
-
-                function addZ(n) {
-                    return (n<10? '0':'') + n;
-                }
-
-                var ms = s % 1000;
-                s = (s - ms) / 1000;
-                var secs = s % 60;
-                s = (s - secs) / 60;
-                var mins = s % 60;
-                var hrs = (s - mins) / 60;
-                mins = mins + (hrs*60);
-
-                return addZ(mins) + ':' + addZ(secs);
-            }
-
-            $scope.currentDiffString = msToTime(Date.now() - $scope.from);
-            $interval(function(){
-                $scope.currentDiffString = msToTime(Date.now() - $scope.from);
-            }, 1000)
-        },
-        template: "<span>{{currentDiffString}}</span>"
-    }
-});

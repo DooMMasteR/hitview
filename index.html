@@ -20,8 +20,10 @@
     </div>
 </div>
 <hr>
-<div class="col-sm-2"></div>
-<div class="container col-sm-8 center-block" ng-controller="HitView">
+<div class="col-sm-3">
+</div>
+<div ng-controller="HitView">
+<div class="container col-sm-8 center-block">
     <table class="table table-bordered">
         <tr>
             <th style="text-align: center" width="30%">
@@ -37,15 +39,16 @@
                 HitCount
             </th>
         </tr>
-        <tr style="text-align: center" ng-repeat="target in double|orderBy: '-timestamp'">
+        <tr style="text-align: center" ng-repeat="target in double.targetList|orderBy: '-timestamp'">
             <td style="text-align: center">{{target.id}}</td>
             <td style="text-align: center">{{target.eventType}}</td>
-            <td style="text-align: center"><time-difference-to-now from-time="target.timestamp"></time-difference-to-now></td>
+            <td style="text-align: center"><span>{{target.timestamp| amFromUnix | amDateFormat: 'HH:MM:ss'}}</span></td>
             <td style="text-align: center">{{target.hitcount}}</td>
         </tr>
     </table>
 </div>
-<div class="col-sm-2"></div>
-
+<div class="col-sm-1"><button type="button" ng-click="reset()">Reset!</button>
+</div>
+</div>
 </body>
 </html>
