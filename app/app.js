@@ -101,7 +101,7 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
     Targets.clear = function(){
         targets.targetList = [];
         targets.teamHitcount = 0;
-        targets.teamName = 0;
+        targets.teamName = "";
     };
 
 
