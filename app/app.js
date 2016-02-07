@@ -100,6 +100,8 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
 
     Targets.clear = function(){
         targets.targetList = [];
+        targets.teamHitcount = 0;
+        targets.teamName = 0;
     };
 
 
@@ -115,7 +117,12 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
             if (message.data.hits) {
                 target.hitcount = message.data.hits;
             }
-            //Targets.setTeamName(message.data.team);
+            if (message.data.teamName) {
+                Targets.setTeamName(message.data.teamName);
+            }
+            if (message.data.overallHits) {
+                Targets.setTeamHitcount(message.data.overallHits);
+            }
         }
     });
 
@@ -125,8 +132,8 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
 app.controller('HitView', function ($scope, $interval, $log, WebsocketService, Targets, amMoment) {
     $scope.wsService = WebsocketService;
     $scope.double = Targets.getTargets();
-    $interval(function(){
-        $log.debug($scope.double);
-    }, 3000);
+    $scope.reset = function(){
+        Targets.clear();
+    }
 });
 

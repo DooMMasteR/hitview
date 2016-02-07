@@ -20,9 +20,12 @@
     </div>
 </div>
 <hr>
-<div class="col-sm-3">
-</div>
 <div ng-controller="HitView">
+<div class="col-sm-3">
+    <h2>Team: {{double.teamName}}</h2>
+    <h4>Total Hits: {{double.teamHitcount}}</h4>
+    <button type="button" ng-click="reset()">Reset!</button>
+</div>
 <div class="container col-sm-8 center-block">
     <table class="table table-bordered">
         <tr>
@@ -47,7 +50,7 @@
         </tr>
     </table>
 </div>
-<div class="col-sm-1"><button type="button" ng-click="reset()">Reset!</button>
+<div class="col-sm-1">
 </div>
 </div>
 </body>
