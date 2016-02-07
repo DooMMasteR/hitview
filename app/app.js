@@ -55,7 +55,7 @@ app.factory('Target', function ($log) {
     function Taget(id) {
         $log.debug("New Target created");
         this.id = id;
-        this.eventType = "";
+        this.acceleration = 0;
         this.timestamp = "";
         this.hitcount = 0;
     }
@@ -112,8 +112,8 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
     WebsocketService.onmessage(function (message) {
         if (message.event == "hit") {
             var target = Targets.getTargetById(parseInt(message.data.id), true);
-            if (message.data.eventType) {
-                target.eventType = message.data.eventType;
+            if (message.data.len) {
+                target.acceleration = message.data.len;
             }
             if (message.data.state) {
                 target.timestamp = message.data.state;
@@ -140,7 +140,7 @@ app.controller('HitView', function ($scope, $timeout, $interval, $log, Websocket
     }, 1000);
     $scope.reset = function(){
         Targets.clear();
-    }
+    };
     $log.debug("MainController done");
 });
 

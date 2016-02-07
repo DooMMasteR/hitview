@@ -33,7 +33,7 @@
                 Node ID
             </th>
             <th style="text-align: center" width="30%">
-                Event
+                Acceleration (mG)
             </th>
             <th style="text-align: center" width="10%">
                 Time
@@ -44,7 +44,7 @@
         </tr>
         <tr style="text-align: center" ng-repeat="target in double.targetList|orderBy: '-timestamp'">
             <td style="text-align: center">{{target.id}}</td>
-            <td style="text-align: center">{{target.eventType}}</td>
+            <td style="text-align: center">{{target.acceleration}}</td>
             <td style="text-align: center"><span>{{target.timestamp| amFromUnix | amDateFormat: 'HH:MM:ss'}}</span></td>
             <td style="text-align: center">{{target.hitcount}}</td>
         </tr>
