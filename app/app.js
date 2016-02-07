@@ -17,15 +17,17 @@ app.service('WebsocketService', function ($websocket, $log, $interval) {
 
     _ws.$on('$open', function () {
         $log.debug("Wer are connected");
-        //$interval(function () {
-        //    var data = {
-        //        id: Math.floor((Math.random() * 10) + 1),
-        //        eventType: Math.floor((Math.random() * 10) + 1),
-        //        timestamp: Date.now(),
-        //        name: "wand"
-        //    };
-        //    _ws.$emit("target.event", data);
-        //}, 3000);
+        $interval(function () {
+            var data = {
+                id: Math.floor((Math.random() * 10) + 1) + "",
+                teamName: Math.floor((Math.random() * 10) + 1),
+                state: Date.now()/1000,
+                overallHits: Math.floor((Math.random() * 100) + 1),
+                hits: Math.floor((Math.random() * 61) + 1),
+                name: "wand"
+            };
+            _ws.$emit("hit", data);
+        }, 3000);
     });
 
     _ws.$on('$message', function (data) {
@@ -46,6 +48,7 @@ app.service('WebsocketService', function ($websocket, $log, $interval) {
     this.onmessage = function (func) {
         _messagecallback.push(func);
     };
+    $log.debug("WS created");
 });
 
 app.factory('Target', function ($log) {
@@ -56,6 +59,7 @@ app.factory('Target', function ($log) {
         this.timestamp = "";
         this.hitcount = 0;
     }
+    $log.debug("Target init done");
     return Taget;
 });
 
@@ -125,15 +129,18 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
             }
         }
     });
-
+    $log.debug("Tagets init dones");
     return Targets;
 });
 
-app.controller('HitView', function ($scope, $interval, $log, WebsocketService, Targets, amMoment) {
-    $scope.wsService = WebsocketService;
-    $scope.double = Targets.getTargets();
+app.controller('HitView', function ($scope, $timeout, $interval, $log, WebsocketService, Targets, amMoment) {
+    //x$scope.wsService = WebsocketService;
+    $timeout(function() {
+        $scope.double = Targets.getTargets();
+    }, 1000);
     $scope.reset = function(){
         Targets.clear();
     }
+    $log.debug("MainController done");
 });
 
