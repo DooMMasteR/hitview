@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('hitviewapp', ['ngWebsocket', 'ngLodash', 'angularMoment']);
+var app = angular.module('hitviewapp', ['ngWebsocket', 'ngLodash']);
 
 app.service('WebsocketService', function ($websocket, $log, $interval) {
     var _messagecallback = [];
@@ -133,8 +133,15 @@ app.factory('Targets', function (WebsocketService, $log, lodash, Target) {
     return Targets;
 });
 
-app.controller('HitView', function ($scope, $timeout, $interval, $log, WebsocketService, Targets, amMoment) {
+app.controller('HitView', function ($scope, $timeout, $interval, $log, WebsocketService, Targets) {
     //x$scope.wsService = WebsocketService;
+    $scope.getTimeString = function(unixtime){
+        var date = new Date(unixtime*1000);
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2)
+    };
     $timeout(function() {
         $scope.double = Targets.getTargets();
     }, 1000);
@@ -142,5 +149,26 @@ app.controller('HitView', function ($scope, $timeout, $interval, $log, Websocket
         Targets.clear();
     };
     $log.debug("MainController done");
+});
+
+app.directive("clockSpan", function () {
+    return {
+        restrict: "E",
+        scope: {
+            format: "=format",
+            timezone: "=timezone",
+            class: "=class"
+        },
+        controller: function($scope, $interval, $locale){
+            $scope.class = $scope.class || "";
+            $scope.format = $scope.format || "EEEE dd.MM.yyyy HH:mm:ss";
+            $scope.timezone = $scope.timezone || "0";
+            $scope.currentDate = Date.now();
+            $interval(function(){
+                $scope.currentDate = Date.now();
+            }, 1000)
+        },
+        template: "<span class={{class}}>{{currentDate| date: format}} {{$locale.id}}</span>"
+    }
 });
 

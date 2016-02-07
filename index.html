@@ -14,22 +14,22 @@
     <script src="app/app.js"></script>
 </head>
 <body>
-<div class="container" style="width: 100%;">
+<div class="container" style="width: 100%; margin-top: 5px">
     <div class="container-float pull-right">
-        <!--<clock-span style="white-space:nowrap;"></clock-span>-->
+        <clock-span style="white-space:nowrap; font-size: 120%; font-weight: bolder";></clock-span>
     </div>
 </div>
 <hr>
-<div ng-controller="HitView">
-<div class="col-sm-3">
-    <h2>Team: {{double.teamName}}</h2>
-    <h4>Total Hits: {{double.teamHitcount}}</h4>
-    <button type="button" ng-click="reset()">Reset!</button>
+<div ng-controller="HitView" style="font-size: 170%; height: 100%">
+<div class="col-sm-3" style="height: 100%">
+    <h1>Team: {{double.teamName}}</h1>
+    <h3>Total Hits: {{double.teamHitcount}}</h3>
+    <button class="bottom-left clearfix" type="button" style="font-size: 50%" ng-click="reset()">Reset!</button>
 </div>
 <div class="container col-sm-8 center-block">
     <table class="table table-bordered">
         <tr>
-            <th style="text-align: center" width="30%">
+            <th style="text-align: center" width="10%">
                 Node ID
             </th>
             <th style="text-align: center" width="30%">
@@ -45,7 +45,7 @@
         <tr style="text-align: center" ng-repeat="target in double.targetList|orderBy: '-timestamp'">
             <td style="text-align: center">{{target.id}}</td>
             <td style="text-align: center">{{target.acceleration}}</td>
-            <td style="text-align: center"><span>{{target.timestamp| amFromUnix | amDateFormat: 'HH:MM:ss'}}</span></td>
+            <td style="text-align: center"><span>{{getTimeString(target.timestamp)}}</span></td>
             <td style="text-align: center">{{target.hitcount}}</td>
         </tr>
     </table>
